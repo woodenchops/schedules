@@ -8,7 +8,6 @@ const Container = () => {
 
     return ( 
         <>
-        <h1>hi</h1>
         <Schedule schedules={schedules} endSchedule={endSchedule} endAppointment={endAppointment} />
         </>
      );

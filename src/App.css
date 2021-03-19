@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+.schedule_wrapper {
+  border: 2px solid red;
+  margin: 1rem 0;
+  padding: 10px;
+}
+
+.row {
+  border: 2px solid blue;
+  margin: 10px 0;
+}

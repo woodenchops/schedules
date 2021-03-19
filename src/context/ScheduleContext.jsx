@@ -30,6 +30,16 @@ export const ScheduleProvider = ({children}) => {
                     scheduleId: 2,
                     id: 9098097777777,
                     name: 'appointment 1',
+                },
+                {
+                    scheduleId: 2,
+                    id: 9098097798888,
+                    name: 'appointment 2',
+                },
+                {
+                    scheduleId: 2,
+                    id: 90980911117,
+                    name: 'appointment 3',
                 }
             ]
         }

@@ -6,10 +6,14 @@ const Schedule = ({schedules, endSchedule, endAppointment}) => {
         <>
 
         {schedules && schedules.length > 0 && schedules.map(schedule => (
-            <div key={schedule.id}>
-                <h2>{schedule.name}</h2>
-                <Appointment appointments={schedule.appointments} endSchedule={endSchedule} endAppointment={endAppointment} scheduleId={schedule.id}/>
-            </div>
+            
+            schedule.appointments && schedule.appointments.length > 0 && (
+                    <div key={schedule.id} className="schedule_wrapper">
+                        <h2>{schedule.name}</h2>
+                        <Appointment appointments={schedule.appointments} endSchedule={endSchedule} endAppointment={endAppointment} scheduleId={schedule.id}/>
+                    </div>
+                )
+            
         ))}
 
         </>
