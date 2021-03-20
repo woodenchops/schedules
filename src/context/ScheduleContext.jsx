@@ -9,15 +9,16 @@ export const ScheduleProvider = ({children}) => {
         {
             id: 1,
             name: 'schedule 1',
+            firstAppoitmentId: 1,
             appointments: [
                 {
                     scheduleId: 1,
-                    id: 98989999,
+                    id: 1,
                     name: 'appointment 1',
                 },
                 {
                     scheduleId: 1,
-                    id: 87866665655,
+                    id: 2,
                     name: 'appointment 2',
                 }
             ]
@@ -25,20 +26,21 @@ export const ScheduleProvider = ({children}) => {
         {
             id: 2,
             name: 'schedule 2',
+            firstAppoitmentId: 1,
             appointments: [
                 {
                     scheduleId: 2,
-                    id: 9098097777777,
+                    id: 1,
                     name: 'appointment 1',
                 },
                 {
                     scheduleId: 2,
-                    id: 9098097798888,
+                    id: 2,
                     name: 'appointment 2',
                 },
                 {
                     scheduleId: 2,
-                    id: 90980911117,
+                    id: 3,
                     name: 'appointment 3',
                 }
             ]
@@ -50,26 +52,44 @@ const endAppointment = (scheduleId, appointmentId) => {
 
        setSchedules((currentSchedule) => {
      
+                // filter out which schedule the appointment belongs to
+
                const filteredSchedules = currentSchedule.find(s => s.id === scheduleId);
+
+               // from the filtered schedule, remove the appointment that was clicked 
 
                const filteredAppoitments = filteredSchedules.appointments.filter(a => {
                     return a.id !== appointmentId && a;
                 });
 
 
-                const updatedSchedules = currentSchedule.map(x => {
-                    return {
-                     ...x,
-                     appointments: x.id === scheduleId ? filteredAppoitments : x.appointments
+                /* 
+                
+                loop through all schedules and update the appointment based on the scheduleId to find the schedule you clicked on.
+
+               return {
+                     ...schedule,
+                     appointments: schedule.id === scheduleId ? filteredAppoitments : schedule.appointments
               
                     }
-                })
+
                 
-                return updatedSchedules;
-                       
+                    if the id of the current schedule in the loop matches the scheduleId - (the schedule id that you clicked on)
+                    - then update the appoitment property on that schedule to filteredAppoitments. ELSE keep the original appointments prop - schedule.appointments
+
+                */
+
+               const updatedSchedules = currentSchedule.map(schedule => {
+                    return {
+                     ...schedule,
+                     appointments: schedule.id === scheduleId ? filteredAppoitments : schedule.appointments
+              
+                    }
+                });
                 
 
- 
+                // return updated schedules array back to the state.
+                return updatedSchedules;
         })
 
     }
