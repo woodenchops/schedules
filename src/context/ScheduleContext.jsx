@@ -121,18 +121,19 @@ const filterAllAppoitments = (currentSchedule, scheduleId) => {
 
 const filterSpecificAppoitments = (currentSchedule, scheduleId, selectedAppointment) => {
 
-        const filteredAppoitments = currentSchedule && currentSchedule.length > 0 && currentSchedule.appointments.filter(appointment => {
-            // return appointment that matches the firstAppoitmentId AND the appointment that you clicked
 
-            // return (currentSchedule.firstAppoitmentId === appointment.id ) && appointment;
-            return formattedDate(appointment.dateOfAppointment) >= formattedDate(selectedAppointment.dateOfAppointment) && appointment;
+        const filteredAppoitments = currentSchedule && currentSchedule.appointments.filter(appointment => {
+            return (formattedDate(selectedAppointment.dateOfAppointment) >= formattedDate(appointment.dateOfAppointment)) && appointment;
         });
 
 
-    const selectedSchedules = {
-        ...currentSchedule,
-        appointments: currentSchedule.id === scheduleId ? filteredAppoitments : currentSchedule.appointments
-    }
+        const finalFilter = filteredAppoitments && filteredAppoitments.length > 0 ? filteredAppoitments.filter(x => x.id !== selectedAppointment.id ) : [];
+
+        
+        const selectedSchedules = {
+            ...currentSchedule,
+            appointments: currentSchedule.id === scheduleId ? finalFilter : currentSchedule.appointments
+        }
 
        return selectedSchedules;
 
