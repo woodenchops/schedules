@@ -1,4 +1,4 @@
-import React, {useState, createContext} from 'react';
+import React, {useState, createContext, useMemo, useCallback} from 'react';
 
 export const ScheduleContext = createContext();
 
@@ -58,114 +58,111 @@ export const ScheduleProvider = ({children}) => {
         }
     ]);
 
+    const schedulesMemo = useMemo(() => {
+        return schedules;
+    }, [schedules])
 
-const formattedDate = (date) => {
-   
-    const removeHyphens = date.replace(/-/g, '');
-    const parseToInt = parseInt(removeHyphens);
 
-    return parseToInt;
+    const formattedDate = (date) => {
     
-}
+        const removeHyphens = date.replace(/-/g, '');
+        const parseToInt = parseInt(removeHyphens);
 
-
-const endAppointment = (scheduleId, selectedAppointment) => {
-
-       setSchedules((currentSchedule) => {
-     
-                // filter out which schedule the appointment belongs to
-
-               const filteredSchedules = currentSchedule && currentSchedule.length > 0 && currentSchedule.find(schedule => schedule.id === scheduleId);
-
-               // from the filtered schedule, remove the appointment that was clicked 
-
-               const filteredAppoitments = filteredSchedules && filteredSchedules.appointments.filter(appointment => {
-                    return appointment.id !== selectedAppointment.id && appointment;
-                });
-
-
-                /* 
-                
-                loop through all schedules and update the appointment based on the scheduleId to find the schedule you clicked on.
-
-               return {
-                     ...schedule,
-                     appointments: schedule.id === scheduleId ? filteredAppoitments : schedule.appointments
-              
-                    }
-
-                
-                    if the id of the current schedule in the loop matches the 'scheduleId' - (the schedule id that you clicked on)
-                    - then update the appoitment property on that schedule to 'filteredAppoitments'. ELSE keep the original appointments prop - 'schedule.appointments'
-
-                */
-
-               const updatedSchedules = currentSchedule && currentSchedule.length > 0 && currentSchedule.map(schedule => ({
-                     ...schedule,
-                     appointments: schedule.id === scheduleId ? filteredAppoitments : schedule.appointments
-                }));
-                
-
-                // return updated schedules array back to the state.
-                return updatedSchedules;
-        })
-
+        return parseToInt;
+        
     }
 
 
-const filterAllAppoitments = (currentSchedule, scheduleId) => {
+    const endAppointment = useCallback((scheduleId, selectedAppointment) => {
 
-     return currentSchedule.id !== scheduleId && currentSchedule;        
-}
-
-
-const filterSpecificAppoitments = (currentSchedule, scheduleId, selectedAppointment) => {
-
-
-        const filteredAppoitments = currentSchedule && currentSchedule.appointments.filter(appointment => {
-            return (formattedDate(selectedAppointment.dateOfAppointment) >= formattedDate(appointment.dateOfAppointment)) && appointment;
-        });
-
-
-        const finalFilter = filteredAppoitments && filteredAppoitments.length > 0 ? filteredAppoitments.filter(appointment => appointment.id !== selectedAppointment.id ) : [];
-
+        setSchedules((currentSchedule) => {
         
-        const selectedSchedules = {
-            ...currentSchedule,
-            appointments: currentSchedule.id === scheduleId ? finalFilter : currentSchedule.appointments
-        }
+                // filter out which schedule the appointment belongs to
 
-       return selectedSchedules;
+                const filteredSchedules = currentSchedule && currentSchedule.length > 0 && currentSchedule.find(schedule => schedule.id === scheduleId);
 
+                // from the filtered schedule, remove the appointment that was clicked 
 
-}
-
-
-const endSchedule = (scheduleId, selectedAppointment) => {
+                const filteredAppoitments = filteredSchedules && filteredSchedules.appointments.filter(appointment => {
+                        return appointment.id !== selectedAppointment.id && appointment;
+                    });
 
 
-setSchedules((currentSchedule) => {
+                    /* 
+                    
+                    loop through all schedules and update the appointment based on the scheduleId to find the schedule you clicked on.
 
-    return currentSchedule && currentSchedule.length > 0 && currentSchedule.map(schedule => {
+                return {
+                        ...schedule,
+                        appointments: schedule.id === scheduleId ? filteredAppoitments : schedule.appointments
+                
+                        }
 
-        if(schedule && schedule.firstAppoitmentId.id === selectedAppointment.id) {
-           return filterAllAppoitments(schedule, scheduleId);
-        } else {
-          return filterSpecificAppoitments(schedule, scheduleId, selectedAppointment);
-        }
+                    
+                        if the id of the current schedule in the loop matches the 'scheduleId' - (the schedule id that you clicked on)
+                        - then update the appoitment property on that schedule to 'filteredAppoitments'. ELSE keep the original appointments prop - 'schedule.appointments'
 
-    });
+                    */
+
+                const updatedSchedules = currentSchedule && currentSchedule.length > 0 && currentSchedule.map(schedule => ({
+                        ...schedule,
+                        appointments: schedule.id === scheduleId ? filteredAppoitments : schedule.appointments
+                    }));
+                    
+
+                    // return updated schedules array back to the state.
+                    return updatedSchedules;
+            })
+
+        }, [])
 
 
-    
+    const filterAllAppoitments = useCallback((currentSchedule, scheduleId) => {
 
- });
+        return currentSchedule.id !== scheduleId && currentSchedule;        
+    }, [])
 
-}
+
+    const filterSpecificAppoitments = useCallback((currentSchedule, scheduleId, selectedAppointment) => {
+
+            const filteredAppoitments = currentSchedule && currentSchedule.appointments.filter(appointment => {
+                return (formattedDate(selectedAppointment.dateOfAppointment) >= formattedDate(appointment.dateOfAppointment)) && appointment;
+            });
+
+
+            const finalFilter = filteredAppoitments && filteredAppoitments.length > 0 ? filteredAppoitments.filter(appointment => appointment.id !== selectedAppointment.id ) : [];
+
+            
+            const selectedSchedules = {
+                ...currentSchedule,
+                appointments: currentSchedule.id === scheduleId ? finalFilter : currentSchedule.appointments
+            }
+
+        return selectedSchedules;
+
+    }, [])
+
+
+    const endSchedule = useCallback((scheduleId, selectedAppointment) => {
+
+            setSchedules((currentSchedule) => {
+
+                return currentSchedule && currentSchedule.length > 0 ? currentSchedule.map(schedule => {
+
+                    if(schedule && schedule.firstAppoitmentId.id === selectedAppointment.id) {
+                        return filterAllAppoitments(schedule, scheduleId);
+                    } else {
+                        return filterSpecificAppoitments(schedule, scheduleId, selectedAppointment);
+                    }
+
+                }) : [];
+
+            });
+    }, [filterSpecificAppoitments, filterAllAppoitments])
 
 
     const scheduleState = {
-        schedules,
+        schedulesMemo,
         endSchedule,
         endAppointment
     }

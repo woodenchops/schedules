@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import  Appointment from './Appointments';
 
 const Schedule = ({schedules, endSchedule, endAppointment}) => {
@@ -19,5 +20,11 @@ const Schedule = ({schedules, endSchedule, endAppointment}) => {
         </>
      );
 }
+
+Schedule.propTypes = {
+    schedules: PropTypes.object.isRequired,
+    endSchedule: PropTypes.func.isRequired,
+    endAppointment: PropTypes.func.isRequired,
+  };
  
 export default Schedule;
