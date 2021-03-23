@@ -9,57 +9,78 @@ export const ScheduleProvider = ({children}) => {
         {
             id: 1,
             name: 'schedule 1',
-            firstAppoitmentId: 1,
+            firstAppoitmentId: {
+                id: 0,
+                date: '2021-06-20'
+            },
             appointments: [
                 {
                     scheduleId: 1,
-                    id: 1,
+                    id: 0,
                     name: 'appointment 1',
+                    dateOfAppointment: '2021-06-20'
                 },
                 {
                     scheduleId: 1,
-                    id: 2,
+                    id: 1,
                     name: 'appointment 2',
+                    dateOfAppointment: '2021-06-27'
                 }
             ]
         },
         {
             id: 2,
             name: 'schedule 2',
-            firstAppoitmentId: 1,
+            firstAppoitmentId: {
+                id: 0,
+                date: '2021-07-20'
+            },
             appointments: [
                 {
                     scheduleId: 2,
-                    id: 1,
+                    id: 0,
                     name: 'appointment 1',
+                    dateOfAppointment: '2021-07-20'
+                },
+                {
+                    scheduleId: 2,
+                    id: 1,
+                    name: 'appointment 2',
+                    dateOfAppointment: '2021-07-27'
                 },
                 {
                     scheduleId: 2,
                     id: 2,
-                    name: 'appointment 2',
-                },
-                {
-                    scheduleId: 2,
-                    id: 3,
                     name: 'appointment 3',
+                    dateOfAppointment: '2021-08-04'
                 }
             ]
         }
     ]);
 
 
-const endAppointment = (scheduleId, appointmentId) => {
+const formattedDate = (date) => {
+   
+    const removedHyohens = date.replace(/-/g, '');
+    const parseed = parseInt(removedHyohens);
+    console.log(parseed);
+    return parseed;
+    
+}
+
+
+const endAppointment = (scheduleId, selectedAppointment) => {
 
        setSchedules((currentSchedule) => {
      
                 // filter out which schedule the appointment belongs to
 
-               const filteredSchedules = currentSchedule.find(s => s.id === scheduleId);
+               const filteredSchedules = currentSchedule && currentSchedule.length > 0 && currentSchedule.find(schedule => schedule.id === scheduleId);
 
                // from the filtered schedule, remove the appointment that was clicked 
 
-               const filteredAppoitments = filteredSchedules.appointments.filter(a => {
-                    return a.id !== appointmentId && a;
+               const filteredAppoitments = filteredSchedules && filteredSchedules.appointments.filter(appointment => {
+                    return appointment.id !== selectedAppointment.id && appointment;
                 });
 
 
@@ -74,18 +95,15 @@ const endAppointment = (scheduleId, appointmentId) => {
                     }
 
                 
-                    if the id of the current schedule in the loop matches the scheduleId - (the schedule id that you clicked on)
-                    - then update the appoitment property on that schedule to filteredAppoitments. ELSE keep the original appointments prop - schedule.appointments
+                    if the id of the current schedule in the loop matches the 'scheduleId' - (the schedule id that you clicked on)
+                    - then update the appoitment property on that schedule to 'filteredAppoitments'. ELSE keep the original appointments prop - 'schedule.appointments'
 
                 */
 
-               const updatedSchedules = currentSchedule.map(schedule => {
-                    return {
+               const updatedSchedules = currentSchedule && currentSchedule.length > 0 && currentSchedule.map(schedule => ({
                      ...schedule,
                      appointments: schedule.id === scheduleId ? filteredAppoitments : schedule.appointments
-              
-                    }
-                });
+                }));
                 
 
                 // return updated schedules array back to the state.
@@ -94,16 +112,53 @@ const endAppointment = (scheduleId, appointmentId) => {
 
     }
 
-const endSchedule = (id) => {
+
+const filterAllAppoitments = (currentSchedule, scheduleId) => {
+
+     return currentSchedule.id !== scheduleId && currentSchedule;        
+}
+
+
+const filterSpecificAppoitments = (currentSchedule, scheduleId, selectedAppointment) => {
+
+        const filteredAppoitments = currentSchedule && currentSchedule.length > 0 && currentSchedule.appointments.filter(appointment => {
+            // return appointment that matches the firstAppoitmentId AND the appointment that you clicked
+
+            // return (currentSchedule.firstAppoitmentId === appointment.id ) && appointment;
+            return formattedDate(appointment.dateOfAppointment) >= formattedDate(selectedAppointment.dateOfAppointment) && appointment;
+        });
+
+
+    const selectedSchedules = {
+        ...currentSchedule,
+        appointments: currentSchedule.id === scheduleId ? filteredAppoitments : currentSchedule.appointments
+    }
+
+       return selectedSchedules;
+
+
+}
+
+
+const endSchedule = (scheduleId, selectedAppointment) => {
+
 
 setSchedules((currentSchedule) => {
 
-     return currentSchedule.filter((schedule) => {
+    return currentSchedule && currentSchedule.length > 0 && currentSchedule.map(schedule => {
 
-         return schedule.id !== id && schedule;
-         
-     });
- })
+        if(schedule && schedule.firstAppoitmentId.id === selectedAppointment.id) {
+           return filterAllAppoitments(schedule, scheduleId);
+        } else {
+          return filterSpecificAppoitments(schedule, scheduleId, selectedAppointment);
+        }
+
+    });
+
+
+    
+
+ });
 
 }
 
