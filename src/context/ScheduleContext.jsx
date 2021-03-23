@@ -61,10 +61,10 @@ export const ScheduleProvider = ({children}) => {
 
 const formattedDate = (date) => {
    
-    const removedHyohens = date.replace(/-/g, '');
-    const parseed = parseInt(removedHyohens);
-    console.log(parseed);
-    return parseed;
+    const removeHyphens = date.replace(/-/g, '');
+    const parseToInt = parseInt(removeHyphens);
+
+    return parseToInt;
     
 }
 
@@ -127,7 +127,7 @@ const filterSpecificAppoitments = (currentSchedule, scheduleId, selectedAppointm
         });
 
 
-        const finalFilter = filteredAppoitments && filteredAppoitments.length > 0 ? filteredAppoitments.filter(x => x.id !== selectedAppointment.id ) : [];
+        const finalFilter = filteredAppoitments && filteredAppoitments.length > 0 ? filteredAppoitments.filter(appointment => appointment.id !== selectedAppointment.id ) : [];
 
         
         const selectedSchedules = {
