@@ -66,7 +66,7 @@ export const ScheduleProvider = ({children}) => {
     const formattedDate = (date) => {
     
         const removeHyphens = date.replace(/-/g, '');
-        const parseToInt = parseInt(removeHyphens);
+        const parseToInt = parseInt(removeHyphens, 0);
 
         return parseToInt;
         
